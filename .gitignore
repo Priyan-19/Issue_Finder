@@ -1,0 +1,53 @@
+# ── GO BINARIES ──
+# Compiled binaries, local executables, and test outputs
+/open-source-issue-finder
+/open-source-issue-finder.exe
+/main
+/main.exe
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+
+# ── WORKSPACE & DEPENDENCIES ──
+# Go workspace files
+go.work
+go.work.sum
+# Dependency directories (if vendoring is used)
+vendor/
+
+# ── LOCAL ENVIRONMENT ──
+# Local environment variables and tokens
+.env
+*.env
+.env.local
+.env.*.local
+
+# ── OPERATING SYSTEM ──
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ── IDE & EDITORS ──
+# Visual Studio Code
+.vscode/
+!.vscode/extensions.json
+*.code-workspace
+.history/
+
+# JetBrains (GoLand, IntelliJ, etc.)
+.idea/
+
+# Vim/Emacs temporary swap files
+*~
+*.swp
+*.swo

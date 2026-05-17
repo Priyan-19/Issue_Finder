@@ -1,0 +1,149 @@
+{{- $params := .Params -}}
+{{- $result := .Result -}}
+
+{{if $result.Error}}
+<div class="error-msg">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <div>
+    <strong>GitHub API Error</strong><br/>
+    {{$result.Error}}<br/>
+    <small style="opacity:.7;margin-top:.25rem;display:block;">
+      Try setting a <code>GITHUB_TOKEN</code> environment variable to increase your rate limit (60 → 5000 req/hr).
+    </small>
+  </div>
+</div>
+
+{{else if not $result.Issues}}
+<div class="empty-state">
+  <div class="empty-icon">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  </div>
+  <h3>No issues found</h3>
+  <p>Try a different language, label, or lower the minimum star count.</p>
+</div>
+
+{{else}}
+
+<!-- Result header -->
+<div class="result-header">
+  <div class="result-count">
+    Showing <strong>{{len $result.Issues}}</strong>
+    {{if gt $result.TotalCount (len $result.Issues)}}
+      of ~{{$result.TotalCount}}
+    {{end}}
+    issues &nbsp;·&nbsp;
+    <span style="font-size:.78rem;">language: <strong>{{$params.Language}}</strong></span>
+  </div>
+
+  <div class="sort-links">
+    <button class="sort-link {{if eq $params.Sort ""}}active{{end}}" data-sort="">Recent</button>
+    <button class="sort-link {{if eq $params.Sort "easiest"}}active{{end}}" data-sort="easiest">Easiest</button>
+    <button class="sort-link {{if eq $params.Sort "activity"}}active{{end}}" data-sort="activity">Active</button>
+    <button class="sort-link {{if eq $params.Sort "priority"}}active{{end}}" data-sort="priority">Priority</button>
+    <button class="sort-link {{if eq $params.Sort "comments"}}active{{end}}" data-sort="comments">Discussed</button>
+  </div>
+</div>
+
+<!-- Issues grid -->
+<div class="issues-grid">
+  {{range $i, $issue := $result.Issues}}
+  <article class="issue-card">
+
+    <!-- Card top: repo + issue number -->
+    <div class="card-header">
+      <a href="{{$issue.RepoURL}}" target="_blank" rel="noopener" class="card-repo" title="{{$issue.RepoName}}">
+        {{$issue.RepoName}}
+      </a>
+      <span class="card-number">#{{$issue.Number}}</span>
+    </div>
+
+    <!-- Title -->
+    <a href="{{$issue.HTMLURL}}" target="_blank" rel="noopener" class="card-title">
+      {{$issue.Title}}
+    </a>
+
+    <!-- Labels -->
+    {{if $issue.Labels}}
+    <div class="card-labels">
+      {{range $issue.Labels}}
+      <span class="label-pill {{labelClass .Name}}">{{.Name}}</span>
+      {{end}}
+    </div>
+    {{end}}
+
+    <!-- Footer: badges + meta + link -->
+    <div class="card-footer">
+      <div class="card-badges">
+        <!-- Difficulty badge -->
+        <span class="badge {{difficultyClass $issue.Difficulty}}">{{$issue.Difficulty}}</span>
+
+        <!-- Activity indicator -->
+        <div class="activity-indicator {{activityClass $issue.ActivityLabel}}">
+          <span class="activity-dot"></span>
+          <span>{{$issue.ActivityLabel}}</span>
+        </div>
+      </div>
+
+      <div class="card-meta">
+        <!-- Comments -->
+        <span class="meta-item" title="Comments">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          {{$issue.Comments}}
+        </span>
+
+        <!-- Updated -->
+        <span class="meta-item" title="Last updated">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          {{timeAgo $issue.UpdatedAt}}
+        </span>
+
+        <!-- Priority score -->
+        <span class="meta-item" title="Priority score">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          {{$issue.PriorityScore}}
+        </span>
+      </div>
+
+      <!-- Open on GitHub -->
+      <a href="{{$issue.HTMLURL}}" target="_blank" rel="noopener" class="open-link">
+        Open
+        <svg viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+      </a>
+    </div>
+
+  </article>
+  {{end}}
+</div>
+
+<!-- Pagination -->
+{{if gt $result.TotalCount 30}}
+<div class="pagination">
+  {{if gt $params.Page 1}}
+  <button class="page-btn" data-page="{{sub $params.Page 1}}">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Prev
+  </button>
+  {{else}}
+  <button class="page-btn" disabled>
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Prev
+  </button>
+  {{end}}
+
+  <span class="page-info">Page {{$params.Page}}</span>
+
+  {{if gt $result.TotalCount (mul $params.Page 30)}}
+  <button class="page-btn" data-page="{{add $params.Page 1}}">
+    Next
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  {{else}}
+  <button class="page-btn" disabled>
+    Next
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+  {{end}}
+</div>
+{{end}}
+
+{{end}}
