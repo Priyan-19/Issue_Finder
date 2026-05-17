@@ -1,20 +1,24 @@
-package main
+package handler
 
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"net/http"
 	"open-source-issue-finder/handlers"
 	"open-source-issue-finder/services"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
-func main() {
-	token := os.Getenv("GITHUB_TOKEN")
+var (
+	once sync.Once
+	mux  *http.ServeMux
+)
 
+func initApp() {
+	token := os.Getenv("GITHUB_TOKEN")
 	githubSvc := services.NewGitHubService(token)
 
 	funcMap := template.FuncMap{
@@ -84,29 +88,19 @@ func main() {
 
 	tmpl, err := template.New("").Funcs(funcMap).ParseFS(handlers.TemplatesFS, "templates/*.html")
 	if err != nil {
-		log.Fatalf("Failed to parse templates: %v", err)
+		panic(fmt.Sprintf("Failed to parse templates: %v", err))
 	}
 
 	issueHandler := handlers.NewIssueHandler(githubSvc, tmpl)
 
-	mux := http.NewServeMux()
+	mux = http.NewServeMux()
 	mux.HandleFunc("/", issueHandler.Index)
 	mux.HandleFunc("/search", issueHandler.SearchIssues)
 	mux.Handle("/static/", http.FileServer(http.FS(handlers.StaticFS)))
+}
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	log.Printf("🚀 Open Source Issue Finder running at http://localhost:%s", port)
-	if token == "" {
-		log.Println("⚠️  No GITHUB_TOKEN set — API rate limits will be lower (60 req/hr)")
-	} else {
-		log.Println("✅ GitHub token detected — using authenticated API (5000 req/hr)")
-	}
-
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
-		log.Fatal(err)
-	}
+// Handler is the entrypoint for Vercel Go Serverless Function
+func Handler(w http.ResponseWriter, r *http.Request) {
+	once.Do(initApp)
+	mux.ServeHTTP(w, r)
 }
