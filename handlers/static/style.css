@@ -1093,7 +1093,7 @@ body {
 @media (max-width: 900px) {
   .hero { padding: 1.25rem 1rem 0.25rem; }
   .search-panel { padding: 0.25rem 1rem 0.75rem; }
-  .main-content { padding: 0 1rem 1rem; }
+  .main-content { padding: 1.5rem 1rem 2rem; }
   .search-form {
     grid-template-columns: 1fr 1fr;
   }
@@ -1106,15 +1106,153 @@ body {
   .header-inner { height: 50px; }
   .logo-text { font-size: 1.1rem; }
   .header-meta { display: none; }
-  .hero-eyebrow::before, .hero-eyebrow::after { width: 12px; }
-  .hero-title { font-size: clamp(1.8rem, 7vw, 2.35rem); }
-  .prompt-grid { grid-template-columns: 1fr; }
-  .result-header { flex-direction: column; align-items: flex-start; }
-  .search-form {
-    grid-template-columns: 1fr;
+  
+  .hero {
+    padding: 1rem 1rem 0.25rem;
   }
-  .search-form .field-group:last-child {
-    grid-column: span 1;
+  .hero-eyebrow::before, .hero-eyebrow::after { width: 12px; }
+  .hero-title { 
+    font-size: 2.25rem; 
+    margin-bottom: 0.25rem;
+  }
+  .hero-sub {
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .search-panel {
+    padding: 0.25rem 0.75rem 0.5rem;
+  }
+  .search-inner {
+    padding: 0.75rem 1rem 1rem;
+    border-radius: var(--radius);
+  }
+  .search-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 0.6rem;
+  }
+  .search-form .field-group label {
+    font-size: 0.65rem;
+  }
+  .search-form .field-group input,
+  .search-form .field-group select {
+    height: 36px;
+    padding: 0 0.6rem;
+    font-size: 0.8rem;
+  }
+  .search-btn {
+    grid-column: span 2;
+    width: 100%;
+    height: 38px;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+  }
+
+  .main-content {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .result-header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    gap: 0.75rem;
+  }
+  .result-count {
+    font-size: 0.82rem;
+    text-align: center;
+  }
+  .sort-links {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .sort-links::-webkit-scrollbar {
+    display: none;
+  }
+  .sort-link {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .issues-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .issue-card {
+    padding: 1.15rem;
+    gap: 0.75rem;
+  }
+  .card-repo {
+    max-width: 180px;
+    font-size: 0.7rem;
+  }
+  .card-title {
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+  .label-pill {
+    font-size: 0.62rem;
+    padding: 0.15rem 0.45rem;
+  }
+  
+  .card-footer {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    padding-top: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  .card-badges {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .card-meta {
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    border-top: 1px solid var(--border2);
+    padding-top: 0.5rem;
+  }
+  .open-link {
+    grid-row: 3;
+    width: 100%;
+    justify-content: center;
+    height: 34px;
+    font-size: 0.75rem;
+  }
+
+  .prompt-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .prompt-card {
+    padding: 1rem;
+  }
+  .prompt-card-title {
+    font-size: 0.95rem;
+  }
+  .prompt-card-desc {
+    font-size: 0.78rem;
+  }
+
+  .pagination {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    gap: 0.5rem;
+  }
+  .page-btn {
+    height: 34px;
+    padding: 0 0.85rem;
+    font-size: 0.72rem;
   }
 }
 
