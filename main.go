@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"html/template"
 	"log"
@@ -8,10 +9,15 @@ import (
 	"open-source-issue-finder/handlers"
 	"open-source-issue-finder/services"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 )
+
+//go:embed templates/*.html
+var templatesFS embed.FS
+
+//go:embed static/*
+var staticFS embed.FS
 
 func main() {
 	token := os.Getenv("GITHUB_TOKEN")
@@ -83,8 +89,7 @@ func main() {
 		"mul": func(a, b int) int { return a * b },
 	}
 
-	tmplPattern := filepath.Join("templates", "*.html")
-	tmpl, err := template.New("").Funcs(funcMap).ParseGlob(tmplPattern)
+	tmpl, err := template.New("").Funcs(funcMap).ParseFS(templatesFS, "templates/*.html")
 	if err != nil {
 		log.Fatalf("Failed to parse templates: %v", err)
 	}
@@ -94,7 +99,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", issueHandler.Index)
 	mux.HandleFunc("/search", issueHandler.SearchIssues)
-	mux.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	mux.Handle("/static/", http.FileServer(http.FS(staticFS)))
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -26,6 +26,7 @@ vendor/
 *.env
 .env.local
 .env.*.local
+.vercel/
 
 # ── OPERATING SYSTEM ──
 # OS-specific files
